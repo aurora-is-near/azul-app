@@ -1,0 +1,34 @@
+{
+  "name": "azul-nft",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.2",
+    "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "@typechain/ethers-v5": "^8.0.5",
+    "@typechain/hardhat": "^3.0.0",
+    "@types/chai": "^4.2.22",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^16.11.10",
+    "chai": "^4.3.4",
+    "dotenv": "10.0.0",
+    "prettier": "^2.5.0",
+    "prettier-plugin-organize-imports": "^2.3.4",
+    "prettier-plugin-solidity": "^1.0.0-beta.19",
+    "sha3": "^2.1.4",
+    "ts-generator": "^0.1.1",
+    "ts-node": "^10.4.0",
+    "typechain": "^6.0.4",
+    "typescript": "^4.5.2",
+    "web3-utils": "^1.5.3"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.4.0",
+    "@openzeppelin/contracts-upgradeable": "^4.4.0",
+    "@openzeppelin/hardhat-upgrades": "^1.12.0",
+    "ethers": "^5.5.1",
+    "hardhat": "^2.7.0"
+  },
+  "scripts": {}
+}
