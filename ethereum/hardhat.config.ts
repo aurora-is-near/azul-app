@@ -26,8 +26,20 @@ const argv = require('yargs/yargs')()
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
-    solidity: '0.8.7',
+    solidity: {
+        version: '0.8.7',
+        settings: {
+            optimizer: {
+                enabled: true,
+                runs: 1,
+            },
+        },
+    },
     networks: {
+        hardhat: {
+            gas: 3_000_000_000,
+            blockGasLimit: 3_000_000_000,
+        },
         aurora: {
             url: `https://mainnet.aurora.dev/${AURORA_TOKEN}`,
             accounts: [`0x${PRIVATE_KEY}`],

@@ -13,6 +13,7 @@ export { ERC721EnumerableUpgradeable__factory } from "./factories/ERC721Enumerab
 export { ERC721Upgradeable__factory } from "./factories/ERC721Upgradeable__factory";
 export { IBeaconUpgradeable__factory } from "./factories/IBeaconUpgradeable__factory";
 export { IERC165Upgradeable__factory } from "./factories/IERC165Upgradeable__factory";
+export { IERC20Upgradeable__factory } from "./factories/IERC20Upgradeable__factory";
 export { IERC721EnumerableUpgradeable__factory } from "./factories/IERC721EnumerableUpgradeable__factory";
 export { IERC721MetadataUpgradeable__factory } from "./factories/IERC721MetadataUpgradeable__factory";
 export { IERC721ReceiverUpgradeable__factory } from "./factories/IERC721ReceiverUpgradeable__factory";
@@ -23,6 +24,7 @@ export { V1__factory } from "./factories/V1__factory";
 export { V2__factory } from "./factories/V2__factory";
 export type { IBeaconUpgradeable } from "./IBeaconUpgradeable";
 export type { IERC165Upgradeable } from "./IERC165Upgradeable";
+export type { IERC20Upgradeable } from "./IERC20Upgradeable";
 export type { IERC721EnumerableUpgradeable } from "./IERC721EnumerableUpgradeable";
 export type { IERC721MetadataUpgradeable } from "./IERC721MetadataUpgradeable";
 export type { IERC721ReceiverUpgradeable } from "./IERC721ReceiverUpgradeable";

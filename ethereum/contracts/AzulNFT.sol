@@ -135,7 +135,7 @@ contract AzulNFT is
         return rawDataFromPasscodeHash(tokenId2PasscodeHash[tokenId]);
     }
 
-    function claim(string memory passcode) public {
+    function claim(string memory passcode) public returns (uint256) {
         bytes memory passcodeBytes = abi.encodePacked(passcode);
         bytes32 passcodeHash = sha256(passcodeBytes);
 
@@ -168,6 +168,8 @@ contract AzulNFT is
         tokenId2PasscodeHash[data.tokenId] = passcodeHash;
 
         _safeMint(_msgSender(), data.tokenId);
+
+        return data.tokenId;
     }
 
     function tokenURI(uint256 tokenId)
