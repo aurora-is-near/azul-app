@@ -1,3 +1,4 @@
 package.json
 node_modules/
 Tasks.todo
+.DS_Store

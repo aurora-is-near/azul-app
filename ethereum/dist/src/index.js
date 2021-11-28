@@ -21,14 +21,20 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const ethers_1 = require("ethers");
 const AzulCompiled = __importStar(require("../artifacts/contracts/AzulNFT.sol/AzulNFT.json"));
-const address = () => {
-    // TODO: Get this address from deployment
-    return '0x370ae746090f84d3ac6120007bda91bce7e2b469';
+const address = () => '0xC28Cab11C0D7b25ae70cD6Ed88D32af6797a077B';
+const NAMES = ['Aurora', 'Rainbow Bridge', 'Lisboa'];
+const IMAGE_NAMES = ['aurora.jpeg', 'rainbow-bridge.jpeg', 'lisboa.jpeg'];
+const PASSCODE_FILES = ['aurora.txt', 'rainbow-bridge.txt', 'lisboa.txt'];
+const IPFS_FOLDER = 'ipfs://bafybeiebz2goc342lsjjzlyriterkufeypjxoykpddgazhw63wmc2ancvi/';
+const edition_info = (editionId) => {
+    return {
+        name: NAMES[editionId],
+        imageUri: IPFS_FOLDER + IMAGE_NAMES[editionId],
+        passcodesFile: 'passcodes/' + PASSCODE_FILES[editionId],
+    };
 };
-const abi = () => {
-    return AzulCompiled.abi;
-};
+const abi = () => AzulCompiled.abi;
 const contract = (provider) => {
     return new ethers_1.ethers.Contract(address(), abi(), provider);
 };
-exports.default = { address, abi, contract };
+exports.default = { address, abi, contract, edition_info };

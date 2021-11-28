@@ -1,6 +1,10 @@
 node_modules/
 cache/
+
+# Track deployments on aurora
 .openzeppelin/unknown-*.json
+!.openzeppelin/unknown-1313161554.json
+
 */.DS_Store/
 
 # Track AzulNFT abi
@@ -11,3 +15,7 @@ artifacts/contracts/*
 !artifacts/contracts/AzulNFT.sol
 artifacts/contracts/AzulNFT.sol/*
 !artifacts/contracts/AzulNFT.sol/AzulNFT.json
+
+# Secrets
+.env
+passcodes

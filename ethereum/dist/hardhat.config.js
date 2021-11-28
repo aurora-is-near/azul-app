@@ -23,10 +23,10 @@ require("@nomiclabs/hardhat-ethers");
 require("@openzeppelin/hardhat-upgrades");
 require("@typechain/hardhat");
 const dotenv = __importStar(require("dotenv"));
-const ethers_1 = require("ethers");
 const web3_utils_1 = require("web3-utils");
+require("./tasks/deploy");
 dotenv.config();
-const PRIVATE_KEY = process.env.PRIVATE_KEY || ethers_1.ethers.Wallet.createRandom().privateKey.slice(2);
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const AURORA_TOKEN = process.env.AURORA_TOKEN || '';
 const INFURA_TOKEN = process.env.INFURA_TOKEN || '';
 const argv = require('yargs/yargs')()
@@ -41,6 +41,7 @@ const argv = require('yargs/yargs')()
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
+    defaultNetwork: 'aurora',
     solidity: {
         version: '0.8.7',
         settings: {
@@ -54,6 +55,11 @@ module.exports = {
         hardhat: {
             gas: 3000000000,
             blockGasLimit: 3000000000,
+        },
+        auroraTunnel: {
+            url: `http://127.0.0.1:5432/`,
+            accounts: [`0x${PRIVATE_KEY}`],
+            chainId: 1313161554,
         },
         aurora: {
             url: `https://mainnet.aurora.dev/${AURORA_TOKEN}`,

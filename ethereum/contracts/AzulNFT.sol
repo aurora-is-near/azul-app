@@ -42,13 +42,13 @@ contract AzulNFT is
     /// Mapping from the hash of each passcode to the data of the associated NFT
     mapping(bytes32 => NFTData) reversePasscode;
     /// Total NFTs claimed
-    uint256 totalClaimed;
+    uint256 public totalClaimed;
     /// Information per edition
     EditionInfo[3] editions;
     /// Mapping from tokenId to passcode Hash. Useful to fetch metadata from a minted NFT.
     mapping(uint256 => bytes32) tokenId2PasscodeHash;
     /// Address for Aurora contract
-    IERC20Upgradeable aurora;
+    IERC20Upgradeable public aurora;
 
     /// Equivalent to constructor in upgradable contracts
     function initialize(IERC20Upgradeable aurora_) public initializer {

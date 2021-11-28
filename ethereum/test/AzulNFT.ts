@@ -1,11 +1,9 @@
 import { sha256 } from '@ethersproject/sha2'
 import { expect } from 'chai'
 import { ethers, upgrades } from 'hardhat'
+import info from '../src/index'
 import { AzulNFT, V1 } from '../typechain-types'
 import getUri = require('get-uri')
-
-const IPFS_IMAGE_FOLDER =
-    'ipfs://bafybeiebz2goc342lsjjzlyriterkufeypjxoykpddgazhw63wmc2ancvi/'
 
 describe('Azul', () => {
     it('Contract is upgradeable', async () => {
@@ -43,15 +41,9 @@ describe('Azul', () => {
         )) as AzulNFT
 
         // Step 2: Upload edition information
-        const images = ['aurora.jpeg', 'rainbow-bridge.jpeg', 'lisboa.jpeg']
-        const names = ['Aurora', 'Rainbow Bridge', 'Lisboa']
-
         for (let i = 0; i < 3; i++) {
-            await azul.setEditionMetadata(
-                i,
-                names[i],
-                IPFS_IMAGE_FOLDER + images[i]
-            )
+            let res = info.edition_info(i)
+            await azul.setEditionMetadata(i, res.name, res.imageUri)
         }
 
         // Step 3: Generate and upload passphrases
@@ -61,7 +53,7 @@ describe('Azul', () => {
             const hashed = []
 
             for (let j = 0; j < 5; ++j) {
-                const passphrase = `${names[i]}-${j}`
+                const passphrase = `azul-edition-${i}-${j}`
                 const hash = sha256(Buffer.from(passphrase, 'utf8'))
 
                 passphrases.push({ passphrase, hash })

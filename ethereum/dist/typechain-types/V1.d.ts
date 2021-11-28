@@ -32,6 +32,7 @@ export interface V1Interface extends utils.Interface {
     functions: {
         "__version()": FunctionFragment;
         "approve(address,uint256)": FunctionFragment;
+        "aurora()": FunctionFragment;
         "balanceOf(address)": FunctionFragment;
         "claim(string)": FunctionFragment;
         "getApproved(uint256)": FunctionFragment;
@@ -51,6 +52,7 @@ export interface V1Interface extends utils.Interface {
         "tokenByIndex(uint256)": FunctionFragment;
         "tokenOfOwnerByIndex(address,uint256)": FunctionFragment;
         "tokenURI(uint256)": FunctionFragment;
+        "totalClaimed()": FunctionFragment;
         "totalSupply()": FunctionFragment;
         "transferFrom(address,address,uint256)": FunctionFragment;
         "transferOwnership(address)": FunctionFragment;
@@ -60,6 +62,7 @@ export interface V1Interface extends utils.Interface {
     };
     encodeFunctionData(functionFragment: "__version", values?: undefined): string;
     encodeFunctionData(functionFragment: "approve", values: [string, BigNumberish]): string;
+    encodeFunctionData(functionFragment: "aurora", values?: undefined): string;
     encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
     encodeFunctionData(functionFragment: "claim", values: [string]): string;
     encodeFunctionData(functionFragment: "getApproved", values: [BigNumberish]): string;
@@ -79,6 +82,7 @@ export interface V1Interface extends utils.Interface {
     encodeFunctionData(functionFragment: "tokenByIndex", values: [BigNumberish]): string;
     encodeFunctionData(functionFragment: "tokenOfOwnerByIndex", values: [string, BigNumberish]): string;
     encodeFunctionData(functionFragment: "tokenURI", values: [BigNumberish]): string;
+    encodeFunctionData(functionFragment: "totalClaimed", values?: undefined): string;
     encodeFunctionData(functionFragment: "totalSupply", values?: undefined): string;
     encodeFunctionData(functionFragment: "transferFrom", values: [string, string, BigNumberish]): string;
     encodeFunctionData(functionFragment: "transferOwnership", values: [string]): string;
@@ -87,6 +91,7 @@ export interface V1Interface extends utils.Interface {
     encodeFunctionData(functionFragment: "uploadPasscodeBatch", values: [BytesLike[], BigNumberish]): string;
     decodeFunctionResult(functionFragment: "__version", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "aurora", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "getApproved", data: BytesLike): Result;
@@ -106,6 +111,7 @@ export interface V1Interface extends utils.Interface {
     decodeFunctionResult(functionFragment: "tokenByIndex", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "tokenOfOwnerByIndex", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "tokenURI", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "totalClaimed", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "totalSupply", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "transferFrom", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "transferOwnership", data: BytesLike): Result;
@@ -202,6 +208,7 @@ export interface V1 extends BaseContract {
         approve(to: string, tokenId: BigNumberish, overrides?: Overrides & {
             from?: string | Promise<string>;
         }): Promise<ContractTransaction>;
+        aurora(overrides?: CallOverrides): Promise<[string]>;
         balanceOf(owner: string, overrides?: CallOverrides): Promise<[BigNumber]>;
         claim(passcode: string, overrides?: Overrides & {
             from?: string | Promise<string>;
@@ -236,6 +243,7 @@ export interface V1 extends BaseContract {
         tokenByIndex(index: BigNumberish, overrides?: CallOverrides): Promise<[BigNumber]>;
         tokenOfOwnerByIndex(owner: string, index: BigNumberish, overrides?: CallOverrides): Promise<[BigNumber]>;
         tokenURI(tokenId: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
+        totalClaimed(overrides?: CallOverrides): Promise<[BigNumber]>;
         totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
         transferFrom(from: string, to: string, tokenId: BigNumberish, overrides?: Overrides & {
             from?: string | Promise<string>;
@@ -257,6 +265,7 @@ export interface V1 extends BaseContract {
     approve(to: string, tokenId: BigNumberish, overrides?: Overrides & {
         from?: string | Promise<string>;
     }): Promise<ContractTransaction>;
+    aurora(overrides?: CallOverrides): Promise<string>;
     balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
     claim(passcode: string, overrides?: Overrides & {
         from?: string | Promise<string>;
@@ -291,6 +300,7 @@ export interface V1 extends BaseContract {
     tokenByIndex(index: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
     tokenOfOwnerByIndex(owner: string, index: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
     tokenURI(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
+    totalClaimed(overrides?: CallOverrides): Promise<BigNumber>;
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
     transferFrom(from: string, to: string, tokenId: BigNumberish, overrides?: Overrides & {
         from?: string | Promise<string>;
@@ -310,6 +320,7 @@ export interface V1 extends BaseContract {
     callStatic: {
         __version(overrides?: CallOverrides): Promise<BigNumber>;
         approve(to: string, tokenId: BigNumberish, overrides?: CallOverrides): Promise<void>;
+        aurora(overrides?: CallOverrides): Promise<string>;
         balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
         claim(passcode: string, overrides?: CallOverrides): Promise<BigNumber>;
         getApproved(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
@@ -330,6 +341,7 @@ export interface V1 extends BaseContract {
         tokenByIndex(index: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
         tokenOfOwnerByIndex(owner: string, index: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
         tokenURI(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
+        totalClaimed(overrides?: CallOverrides): Promise<BigNumber>;
         totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
         transferFrom(from: string, to: string, tokenId: BigNumberish, overrides?: CallOverrides): Promise<void>;
         transferOwnership(newOwner: string, overrides?: CallOverrides): Promise<void>;
@@ -358,6 +370,7 @@ export interface V1 extends BaseContract {
         approve(to: string, tokenId: BigNumberish, overrides?: Overrides & {
             from?: string | Promise<string>;
         }): Promise<BigNumber>;
+        aurora(overrides?: CallOverrides): Promise<BigNumber>;
         balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
         claim(passcode: string, overrides?: Overrides & {
             from?: string | Promise<string>;
@@ -392,6 +405,7 @@ export interface V1 extends BaseContract {
         tokenByIndex(index: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
         tokenOfOwnerByIndex(owner: string, index: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
         tokenURI(tokenId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+        totalClaimed(overrides?: CallOverrides): Promise<BigNumber>;
         totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
         transferFrom(from: string, to: string, tokenId: BigNumberish, overrides?: Overrides & {
             from?: string | Promise<string>;
@@ -414,6 +428,7 @@ export interface V1 extends BaseContract {
         approve(to: string, tokenId: BigNumberish, overrides?: Overrides & {
             from?: string | Promise<string>;
         }): Promise<PopulatedTransaction>;
+        aurora(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         balanceOf(owner: string, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         claim(passcode: string, overrides?: Overrides & {
             from?: string | Promise<string>;
@@ -448,6 +463,7 @@ export interface V1 extends BaseContract {
         tokenByIndex(index: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         tokenOfOwnerByIndex(owner: string, index: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         tokenURI(tokenId: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        totalClaimed(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         transferFrom(from: string, to: string, tokenId: BigNumberish, overrides?: Overrides & {
             from?: string | Promise<string>;

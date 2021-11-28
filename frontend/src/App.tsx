@@ -77,51 +77,96 @@ function Claim() {
         )
 
     const submit = async () => {
-        // Find sha256 from passcode
         const hash = '0x' + shajs('sha256').update(passcode).digest('hex')
-        console.log({ hash, passcode })
 
         const provider = new ethers.providers.Web3Provider(window.ethereum)
+        const signer = provider.getSigner()
 
-        const azul = Azul.contract(provider)
-        console.log('Making request')
+        const azul = Azul.contract(signer)
 
         try {
+            setAlert({ variant: 'info', message: 'Validating passcode' })
             const data = await azul.rawDataFromPasscodeHash(hash)
-            console.log(data)
+            console.log({ hash, data })
+
+            if (!data.exist) {
+                setAlert({ variant: 'warning', message: 'Invalid passcode' })
+            } else if (data.claimed) {
+                setAlert({
+                    variant: 'warning',
+                    message: 'Passcode already used',
+                })
+            } else {
+                setAlert({
+                    variant: 'success',
+                    message: 'Passcode valid. Minting NFT...',
+                })
+
+                const tx = await azul.claim(passcode)
+                const receipt = await provider.getTransactionReceipt(tx.hash)
+
+                if (receipt.status) {
+                    setAlert({
+                        variant: 'success',
+                        message: 'NFT Minted',
+                    })
+                } else {
+                    setAlert({
+                        variant: 'warning',
+                        message: 'Transaction failed',
+                    })
+                }
+            }
         } catch (e) {
+            setAlert({
+                variant: 'danger',
+                message:
+                    'Unexpected error. Check browser console for more details',
+            })
             console.log(e)
         }
-
-        // Check passcode is available
-        // Report error in case of any (already claimed or invalid passcode)
-        // Trigger metamask to sign transaction if it is valid passocde
     }
-
+    // info / danger / success
+    // ;<Card style={{ width: '18rem' }}>
+    //     <Card.Img variant="top" src="holder.js/100px180" />
+    //     <Card.Body>
+    //         <Card.Title>Card Title</Card.Title>
+    //         <Card.Text>
+    //             Some quick example text to build on the card title and make up
+    //             the bulk of the card's content.
+    //         </Card.Text>
+    //         <Button variant="primary">Go somewhere</Button>
+    //     </Card.Body>
+    // </Card>
     return (
-        <Form>
-            <div className="container">
-                <div className="row justify-content-center">
-                    <Form.Group className="col-lg-3" controlId="formBasicInput">
-                        <Form.Control
-                            type="text"
-                            value={passcode}
-                            onChange={(e) => setPasscode(e.target.value)}
-                            placeholder="Enter passcode"
-                        />
-                    </Form.Group>
-                    <Button
-                        variant="primary"
-                        className="col-lg-1"
-                        type="button"
-                        onClick={submit}
-                    >
-                        Submit
-                    </Button>
+        <div>
+            <Form>
+                <div className="container">
+                    <div className="row justify-content-center">
+                        <Form.Group
+                            className="col-lg-3"
+                            controlId="formBasicInput"
+                        >
+                            <Form.Control
+                                type="text"
+                                value={passcode}
+                                onChange={(e) => setPasscode(e.target.value)}
+                                placeholder="Enter passcode"
+                            />
+                        </Form.Group>
+                        <Button
+                            variant="primary"
+                            className="col-lg-1"
+                            type="button"
+                            onClick={submit}
+                        >
+                            Submit
+                        </Button>
+                    </div>
+                    <AlertData />
                 </div>
-                <AlertData />
-            </div>
-        </Form>
+            </Form>
+        </div>
     )
 }
 

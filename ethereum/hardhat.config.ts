@@ -2,13 +2,12 @@ import '@nomiclabs/hardhat-ethers'
 import '@openzeppelin/hardhat-upgrades'
 import '@typechain/hardhat'
 import * as dotenv from 'dotenv'
-import { ethers } from 'ethers'
 import { toWei } from 'web3-utils'
+import './tasks/deploy'
 
 dotenv.config()
 
-const PRIVATE_KEY =
-    process.env.PRIVATE_KEY || ethers.Wallet.createRandom().privateKey.slice(2)
+const PRIVATE_KEY = process.env.PRIVATE_KEY
 
 const AURORA_TOKEN = process.env.AURORA_TOKEN || ''
 const INFURA_TOKEN = process.env.INFURA_TOKEN || ''
@@ -26,6 +25,7 @@ const argv = require('yargs/yargs')()
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
+    defaultNetwork: 'aurora',
     solidity: {
         version: '0.8.7',
         settings: {
@@ -39,6 +39,11 @@ module.exports = {
         hardhat: {
             gas: 3_000_000_000,
             blockGasLimit: 3_000_000_000,
+        },
+        auroraTunnel: {
+            url: `http://127.0.0.1:5432/`,
+            accounts: [`0x${PRIVATE_KEY}`],
+            chainId: 1313161554,
         },
         aurora: {
             url: `https://mainnet.aurora.dev/${AURORA_TOKEN}`,

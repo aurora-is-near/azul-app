@@ -1,10 +1,13 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const sha2_1 = require("@ethersproject/sha2");
 const chai_1 = require("chai");
 const hardhat_1 = require("hardhat");
+const index_1 = __importDefault(require("../src/index"));
 const getUri = require("get-uri");
-const IPFS_IMAGE_FOLDER = 'ipfs://bafybeiebz2goc342lsjjzlyriterkufeypjxoykpddgazhw63wmc2ancvi/';
 describe('Azul', () => {
     it('Contract is upgradeable', async () => {
         const Azul = await hardhat_1.ethers.getContractFactory('V1');
@@ -26,17 +29,16 @@ describe('Azul', () => {
             kind: 'uups',
         }));
         // Step 2: Upload edition information
-        const images = ['aurora.jpeg', 'rainbow-bridge.jpeg', 'lisboa.jpeg'];
-        const names = ['Aurora', 'Rainbow Bridge', 'Lisboa'];
         for (let i = 0; i < 3; i++) {
-            await azul.setEditionMetadata(i, names[i], IPFS_IMAGE_FOLDER + images[i]);
+            let res = index_1.default.edition_info(i);
+            await azul.setEditionMetadata(i, res.name, res.imageUri);
         }
         // Step 3: Generate and upload passphrases
         const passphrases = [];
         for (let i = 0; i < 3; i++) {
             const hashed = [];
             for (let j = 0; j < 5; ++j) {
-                const passphrase = `${names[i]}-${j}`;
+                const passphrase = `azul-edition-${i}-${j}`;
                 const hash = (0, sha2_1.sha256)(Buffer.from(passphrase, 'utf8'));
                 passphrases.push({ passphrase, hash });
                 hashed.push(hash);
