@@ -66,12 +66,13 @@ function GalleryComponent(props: { address: string; page: string }) {
 
     useEffect(() => {
         const fetchNfts = async () => {
+            const isGallery = props.page === 'gallery'
             console.log('Fetching NFTs', props)
             const provider = new ethers.providers.Web3Provider(window.ethereum)
             const azul = Azul.contract(provider)
 
             const total = (
-                await (props.page === 'gallery'
+                await (isGallery
                     ? azul.totalSupply()
                     : azul.balanceOf(props.address))
             ).toNumber()
@@ -82,7 +83,7 @@ function GalleryComponent(props: { address: string; page: string }) {
                 console.log(`Fetching (${i + 1}/${total})`)
 
                 const tokenId = (
-                    await (props.page === 'gallery'
+                    await (isGallery
                         ? azul.tokenByIndex(index)
                         : azul.tokenOfOwnerByIndex(props.address, index))
                 ).toNumber()
@@ -94,12 +95,16 @@ function GalleryComponent(props: { address: string; page: string }) {
 
                     const uri = await azul.tokenURI(tokenId)
                     const metadata = parseUri(uri)
+                    const owner = isGallery
+                        ? await azul.ownerOf(tokenId)
+                        : props.address
 
                     if (images.has(metadata.image)) {
                         nfts.set(tokenId, {
                             name: metadata.name,
                             description: metadata.description,
                             image: images.get(metadata.image),
+                            owner,
                             ready: true,
                         })
 
@@ -130,6 +135,14 @@ function GalleryComponent(props: { address: string; page: string }) {
                             <Card.Body>
                                 <Card.Title>{entry[1].name}</Card.Title>
                                 <Card.Text>{entry[1].description}</Card.Text>
+                                <Card.Text>
+                                    Owner:{' '}
+                                    <a
+                                        href={`${auroraExplorer}/address/${entry[1].owner}`}
+                                    >
+                                        {entry[1].owner.slice(0, 10)}...
+                                    </a>
+                                </Card.Text>
                             </Card.Body>
                         </Card>
                     ))}
