@@ -34,13 +34,18 @@ const AuroraToken = '0x8bec47865ade3b172a928df8f990bc7f2a3b9f79';
     /// Upload editions info
     for (let i = startEdition; i < 3; i++) {
         const value = index_1.default.edition_info(i);
-        console.log('Setting metadata for', value);
-        await azul.setEditionMetadata(i, value.name, value.imageUri);
+        if (i === startEdition && start !== 0) {
+            /// Skip metadata initialization
+        }
+        else {
+            console.log('Setting metadata for', value);
+            await azul.setEditionMetadata(i, value.name, value.imageUri);
+        }
         const passcodes = (0, fs_1.readFileSync)(value.passcodesFile, 'utf-8')
             .split('\n')
             .filter((passcode) => passcode !== '')
             .map((passcode) => (0, sha2_1.sha256)(Buffer.from(passcode, 'utf8')));
-        for (let j = start; j < passcodes.length; j += batchSize) {
+        for (let j = i === startEdition ? start : 0; j < passcodes.length; j += batchSize) {
             const batch = passcodes.slice(j, j + batchSize);
             console.log(`Edition ${i}. Uploading batch [${j}, ${j + batchSize})`);
             await azul.uploadPasscodeBatch(batch, i);

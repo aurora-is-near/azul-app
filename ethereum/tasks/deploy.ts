@@ -34,15 +34,24 @@ task('deploy', 'Deploy AzulNFT')
         /// Upload editions info
         for (let i = startEdition; i < 3; i++) {
             const value = info.edition_info(i)
-            console.log('Setting metadata for', value)
 
-            await azul.setEditionMetadata(i, value.name, value.imageUri)
+            if (i === startEdition && start !== 0) {
+                /// Skip metadata initialization
+            } else {
+                console.log('Setting metadata for', value)
+                await azul.setEditionMetadata(i, value.name, value.imageUri)
+            }
+
             const passcodes = readFileSync(value.passcodesFile, 'utf-8')
                 .split('\n')
                 .filter((passcode) => passcode !== '')
                 .map((passcode) => sha256(Buffer.from(passcode, 'utf8')))
 
-            for (let j = start; j < passcodes.length; j += batchSize) {
+            for (
+                let j = i === startEdition ? start : 0;
+                j < passcodes.length;
+                j += batchSize
+            ) {
                 const batch = passcodes.slice(j, j + batchSize)
                 console.log(
                     `Edition ${i}. Uploading batch [${j}, ${j + batchSize})`
