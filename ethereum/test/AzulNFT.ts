@@ -29,7 +29,7 @@ describe('Azul', () => {
     })
 
     it('Happy path', async () => {
-        const [owner, alice] = await ethers.getSigners()
+        const [_owner, alice] = await ethers.getSigners()
 
         // Step 1: Deploy contract
         const Azul = await ethers.getContractFactory('AzulNFT')

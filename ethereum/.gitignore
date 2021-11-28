@@ -1,5 +1,13 @@
 node_modules/
-artifacts/
 cache/
 .openzeppelin/unknown-*.json
 */.DS_Store/
+
+# Track AzulNFT abi
+# https://stackoverflow.com/a/16318111/4950797
+artifacts/*
+!artifacts/contracts
+artifacts/contracts/*
+!artifacts/contracts/AzulNFT.sol
+artifacts/contracts/AzulNFT.sol/*
+!artifacts/contracts/AzulNFT.sol/AzulNFT.json

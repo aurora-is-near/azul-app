@@ -1,12 +1,15 @@
 import { useMetaMask } from 'metamask-react'
 import { useEffect, useState } from 'react'
+import Alert from 'react-bootstrap/Alert'
+import Button from 'react-bootstrap/Button'
 import Container from 'react-bootstrap/Container'
+import Form from 'react-bootstrap/Form'
 import Nav from 'react-bootstrap/Nav'
 import Navbar from 'react-bootstrap/Navbar'
-import Alert from 'react-bootstrap/Alert'
-import Form from 'react-bootstrap/Form'
-import Button from 'react-bootstrap/Button'
+import shajs from 'sha.js'
 import './App.css'
+import { ethers } from 'ethers'
+import Azul from 'azul-nft'
 
 // TODO: Move expectedChainId to config file
 const expectedChainId = '0x4e454152'
@@ -50,26 +53,74 @@ function LoginMetamask() {
 }
 
 function Claim() {
+    const [alert, setAlert] = useState({ variant: 'success', message: '' })
+    const [passcode, setPasscode] = useState('')
+
+    const AlertData = () =>
+        alert.message === '' ? (
+            <div />
+        ) : (
+            <div className="row justify-content-center">
+                <Alert
+                    variant={alert.variant}
+                    className="col-lg-4 mt-2 hidden text-muted"
+                    style={{
+                        marginBottom: '1px',
+                        height: '30px',
+                        lineHeight: '30px',
+                        padding: '0px 15px',
+                    }}
+                >
+                    {alert.message}
+                </Alert>
+            </div>
+        )
+
+    const submit = async () => {
+        // Find sha256 from passcode
+        const hash = '0x' + shajs('sha256').update(passcode).digest('hex')
+        console.log({ hash, passcode })
+
+        const provider = new ethers.providers.Web3Provider(window.ethereum)
+
+        const azul = Azul.contract(provider)
+        console.log('Making request')
+
+        try {
+            const data = await azul.rawDataFromPasscodeHash(hash)
+            console.log(data)
+        } catch (e) {
+            console.log(e)
+        }
+
+        // Check passcode is available
+        // Report error in case of any (already claimed or invalid passcode)
+        // Trigger metamask to sign transaction if it is valid passocde
+    }
+
     return (
         <Form>
-            <Form.Group className="mb-3" controlId="formBasicEmail">
-                <Form.Label>Email address</Form.Label>
-                <Form.Control type="email" placeholder="Enter email" />
-                <Form.Text className="text-muted">
-                    We'll never share your email with anyone else.
-                </Form.Text>
-            </Form.Group>
-
-            <Form.Group className="mb-3" controlId="formBasicPassword">
-                <Form.Label>Password</Form.Label>
-                <Form.Control type="password" placeholder="Password" />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="formBasicCheckbox">
-                <Form.Check type="checkbox" label="Check me out" />
-            </Form.Group>
-            <Button variant="primary" type="submit">
-                Submit
-            </Button>
+            <div className="container">
+                <div className="row justify-content-center">
+                    <Form.Group className="col-lg-3" controlId="formBasicInput">
+                        <Form.Control
+                            type="text"
+                            value={passcode}
+                            onChange={(e) => setPasscode(e.target.value)}
+                            placeholder="Enter passcode"
+                        />
+                    </Form.Group>
+                    <Button
+                        variant="primary"
+                        className="col-lg-1"
+                        type="button"
+                        onClick={submit}
+                    >
+                        Submit
+                    </Button>
+                </div>
+                <AlertData />
+            </div>
         </Form>
     )
 }
@@ -121,11 +172,14 @@ function App() {
 
     return (
         <div>
-            <Navbar bg="light" variant="light" expand="sm">
+            <Navbar
+                bg="light"
+                variant="light"
+                expand="sm"
+                className="py-0 mb-4"
+            >
                 <Container>
-                    <Navbar.Brand href="#claim" color="blue">
-                        AZUL
-                    </Navbar.Brand>
+                    <Navbar.Brand>AZUL</Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
@@ -147,15 +201,17 @@ function App() {
                             </Nav.Link>
                         </Nav>
                         <Nav>
-                            {/*
-                                // TODO: Align <p> with <a> in the navbar.
-                                         https://stackoverflow.com/a/10523001/4950797
-                            */}
-                            <Nav.Link as="p">
-                                <Alert variant={accountIdVariant}>
-                                    {accountIdMessage}
-                                </Alert>
-                            </Nav.Link>
+                            <Alert
+                                variant={accountIdVariant}
+                                style={{
+                                    marginBottom: '1px',
+                                    height: '30px',
+                                    lineHeight: '30px',
+                                    padding: '0px 15px',
+                                }}
+                            >
+                                {accountIdMessage}
+                            </Alert>
                         </Nav>
                     </Navbar.Collapse>
                 </Container>

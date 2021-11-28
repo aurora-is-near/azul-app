@@ -1,6 +1,8 @@
 {
+  "display": "Node 14",
   "compilerOptions": {
-    "target": "es2018",
+    "lib": ["es2020"],
+    "target": "es2020",
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -12,8 +14,12 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
-    "outDir": "dist"
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "outDir": "./dist",
+    "declaration": true,
+    "rootDirs": ["src", "test", "script", "typechain-types"],
   },
   "include": [
     "./test",
@@ -21,6 +27,7 @@
     "./typechain-types"
   ],
   "files": [
+    "src/index.ts",
     "./hardhat.config.ts"
   ]
 }
