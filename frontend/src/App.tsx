@@ -4,16 +4,24 @@ import Alert from 'react-bootstrap/Alert'
 import Button from 'react-bootstrap/Button'
 import Container from 'react-bootstrap/Container'
 import Form from 'react-bootstrap/Form'
+import Card from 'react-bootstrap/Card'
 import Nav from 'react-bootstrap/Nav'
 import Navbar from 'react-bootstrap/Navbar'
 import shajs from 'sha.js'
 import './App.css'
 import { ethers } from 'ethers'
 import Azul from 'azul-nft'
+import images from './images'
 
 // TODO: Move expectedChainId to config file
 const expectedChainId = '0x4e454152'
 const auroraExplorer = 'https://explorer.mainnet.aurora.dev'
+
+/// Custom URI parser (others were not working for me)
+/// data:application/json;charset=UTF-8,%7B%22name%22%3A%22AZUL - 2%22,%22description%22%3A%22Aurora Edition - 2%22,%22image%22%3A%22ipfs://bafybeiebz2goc342lsjjzlyriterkufeypjxoykpddgazhw63wmc2ancvi/aurora.jpeg%22%7D
+function parseUri(uri: string) {
+    return JSON.parse(unescape(uri.split(',').slice(1).join(',')))
+}
 
 function LoginMetamask() {
     const { status, connect, chainId } = useMetaMask()
@@ -52,7 +60,85 @@ function LoginMetamask() {
     )
 }
 
-function Claim() {
+function GalleryComponent(props: { address: string; page: string }) {
+    const [nfts, setNfts] = useState(new Map())
+    const [nftsCount, setNftsCount] = useState(0)
+
+    useEffect(() => {
+        const fetchNfts = async () => {
+            console.log('Fetching NFTs', props)
+            const provider = new ethers.providers.Web3Provider(window.ethereum)
+            const azul = Azul.contract(provider)
+
+            const total = (
+                await (props.page === 'gallery'
+                    ? azul.totalSupply()
+                    : azul.balanceOf(props.address))
+            ).toNumber()
+
+            for (let i = 0; i < total; i++) {
+                let index = i
+
+                console.log(`Fetching (${i + 1}/${total})`)
+
+                const tokenId = (
+                    await (props.page === 'gallery'
+                        ? azul.tokenByIndex(index)
+                        : azul.tokenOfOwnerByIndex(props.address, index))
+                ).toNumber()
+
+                console.log('Token ID:', tokenId)
+
+                if (!nfts.has(tokenId)) {
+                    console.log('Downloading metadata for Token ID:', tokenId)
+
+                    const uri = await azul.tokenURI(tokenId)
+                    const metadata = parseUri(uri)
+
+                    if (images.has(metadata.image)) {
+                        nfts.set(tokenId, {
+                            name: metadata.name,
+                            description: metadata.description,
+                            image: images.get(metadata.image),
+                            ready: true,
+                        })
+
+                        setNfts(nfts)
+                        setNftsCount(nfts.size)
+
+                        console.log({ nfts })
+                    }
+                }
+            }
+        }
+
+        fetchNfts()
+    })
+
+    return (
+        <div key={nftsCount}>
+            <div className="row justify-content-center">
+                {Array.from(nfts.entries())
+                    .filter((entry) => entry[1].ready)
+                    .map((entry) => (
+                        <Card
+                            style={{ width: '18rem' }}
+                            className="m-2"
+                            key={entry[0]}
+                        >
+                            <Card.Img variant="top" src={`${entry[1].image}`} />
+                            <Card.Body>
+                                <Card.Title>{entry[1].name}</Card.Title>
+                                <Card.Text>{entry[1].description}</Card.Text>
+                            </Card.Body>
+                        </Card>
+                    ))}
+            </div>
+        </div>
+    )
+}
+
+function Claim(props: { address: string; page: string }) {
     const [alert, setAlert] = useState({ variant: 'success', message: '' })
     const [passcode, setPasscode] = useState('')
 
@@ -60,7 +146,7 @@ function Claim() {
         alert.message === '' ? (
             <div />
         ) : (
-            <div className="row justify-content-center">
+            <div className="row justify-content-center mb-5">
                 <Alert
                     variant={alert.variant}
                     className="col-lg-4 mt-2 hidden text-muted"
@@ -81,7 +167,6 @@ function Claim() {
 
         const provider = new ethers.providers.Web3Provider(window.ethereum)
         const signer = provider.getSigner()
-
         const azul = Azul.contract(signer)
 
         try {
@@ -126,23 +211,12 @@ function Claim() {
             console.log(e)
         }
     }
-    // info / danger / success
-    // ;<Card style={{ width: '18rem' }}>
-    //     <Card.Img variant="top" src="holder.js/100px180" />
-    //     <Card.Body>
-    //         <Card.Title>Card Title</Card.Title>
-    //         <Card.Text>
-    //             Some quick example text to build on the card title and make up
-    //             the bulk of the card's content.
-    //         </Card.Text>
-    //         <Button variant="primary">Go somewhere</Button>
-    //     </Card.Body>
-    // </Card>
+
     return (
-        <div>
+        <div className="container">
             <Form>
                 <div className="container">
-                    <div className="row justify-content-center">
+                    <div className="row justify-content-center mb-2">
                         <Form.Group
                             className="col-lg-3"
                             controlId="formBasicInput"
@@ -166,21 +240,19 @@ function Claim() {
                     <AlertData />
                 </div>
             </Form>
+            <GalleryComponent address={props.address} page={props.page} />
         </div>
     )
 }
 
-function Gallery() {
-    return (
-        <div className="px-4 py-5 my-5 text-center">
-            <h1 className="display-5 fw-bold">Under construction</h1>
-            <div className="col-lg-6 mx-auto"></div>
-        </div>
-    )
+function Gallery(props: { address: string; page: string }) {
+    return <GalleryComponent address={props.address} page={props.page} />
 }
 
 function App() {
     const { status, account, chainId } = useMetaMask()
+    const address = account || ''
+
     console.log({ status, account, chainId })
 
     let Body,
@@ -261,7 +333,7 @@ function App() {
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
-            <Body />
+            <Body address={address} page={page} />
         </div>
     )
 }
