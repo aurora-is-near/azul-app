@@ -1,0 +1,18 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+    name: azul-nft-public
+    description: Public Azul NFT repository
+spec:
+    targets:
+        - ./ethereum/.catalog-info.yaml
+        - ./frontend/.catalog-info.yaml
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+    name: azul-nft
+    description: Azul NFT
+spec:
+    owner: security
