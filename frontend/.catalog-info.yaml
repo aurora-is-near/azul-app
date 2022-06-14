@@ -1,0 +1,17 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+    name: azul-nft-frontend
+    description: Frontend for Azul NFT
+    tags:
+        - website
+    annotations:
+        aurora.dev/security-tier: '3'
+spec:
+    owner: security
+    system: azul-nft
+    type: website
+    lifecycle: deprecated
+    dependsOn:
+        - component:azul-nft-contract
